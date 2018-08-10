@@ -1,17 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("GildedRose.Tests")]
 namespace GildedRose.Console
 {
     class Program
     {
         IList<Item> Items;
+        public IList<Item> _Items
+        {
+            get { return this.Items; }
+            set { this.Items = value; }
+        }
         static void Main(string[] args)
         {
             System.Console.WriteLine("OMGHAI!");
 
             var app = new Program()
-                          {
-                              Items = new List<Item>
+            {
+                Items = new List<Item>
                                           {
                                               new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
                                               new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
@@ -26,7 +33,7 @@ namespace GildedRose.Console
                                               new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
                                           }
 
-                          };
+            };
 
             app.UpdateQuality();
 
@@ -78,6 +85,13 @@ namespace GildedRose.Console
                 if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
                 {
                     Items[i].SellIn = Items[i].SellIn - 1;
+                }
+                // Since the Conjured Items quality degrade twice as fast as normal items, 
+                // the below code will degrade the quality one more time.
+                if (Items[i].Name == "Conjured Mana Cake")
+                {
+                    if (Items[i].Quality > 0)
+                        Items[i].Quality = Items[i].Quality - 1;
                 }
 
                 if (Items[i].SellIn < 0)
